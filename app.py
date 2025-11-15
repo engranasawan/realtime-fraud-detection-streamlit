@@ -9,7 +9,7 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 # ==============================
-# 0. Custom transformer used in the pipeline
+# 0. Custom transformers used in the pipeline
 # ==============================
 
 class FraudFeatureEngineer(BaseEstimator, TransformerMixin):
@@ -22,17 +22,39 @@ class FraudFeatureEngineer(BaseEstimator, TransformerMixin):
     you can copy that code here to exactly match training.
     """
 
-    def __init__(self):
-        # Add any constructor args here if you had them in Colab
+    def __init__(self, *args, **kwargs):
+        # Accept *args, **kwargs to be compatible with how it was constructed when training
         pass
 
     def fit(self, X, y=None):
-        # No fitting logic needed for basic transformations
         return self
 
     def transform(self, X):
-        # Identity transform for now; keeps columns as-is.
-        # If your original class added / modified features, implement that here.
+        # Identity transform; keeps columns as-is.
+        X = X.copy()
+        return X
+
+
+class FrequencyEncoder(BaseEstimator, TransformerMixin):
+    """
+    Custom frequency encoder used during training.
+
+    This stub is kept minimal just to satisfy joblib unpickling.
+    If your original implementation stored frequency maps and applied
+    them to specific categorical columns, you can paste that logic here.
+    """
+
+    def __init__(self, *args, **kwargs):
+        # Accept generic args to be compatible with pickled params
+        pass
+
+    def fit(self, X, y=None):
+        # In the original version you might have computed frequency maps here.
+        # For the prototype, we'll skip and act as a no-op.
+        return self
+
+    def transform(self, X):
+        # Identity transform; does not change columns.
         X = X.copy()
         return X
 
