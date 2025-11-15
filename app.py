@@ -7,6 +7,23 @@ import pandas as pd
 import streamlit as st
 from sklearn.base import BaseEstimator, TransformerMixin
 
+# ------------------------------------------------------------------
+# Monkeypatch for sklearn internal class (_RemainderColsList)
+# to make joblib unpickling of ColumnTransformer work across versions
+# ------------------------------------------------------------------
+try:
+    from sklearn.compose import _column_transformer as _ct
+
+    if not hasattr(_ct, "_RemainderColsList"):
+        class _RemainderColsList(list):
+            """Minimal stub for backward compatibility with pickled pipelines."""
+            pass
+
+        _ct._RemainderColsList = _RemainderColsList
+except Exception:
+    # If sklearn import fails for some reason, we'll surface that later in load_artifacts
+    pass
+
 
 # ==============================
 # 0. Custom transformers used in the pipeline
@@ -232,7 +249,6 @@ with st.form("txn_form"):
             ["Android", "iOS", "Windows", "Linux", "Other"],
             index=0,
         )
-        # Streamlit Cloud doesn’t have st.datetime_input → use date + time
         txn_date = st.date_input("Transaction Date", value=datetime.date.today())
         txn_time = st.time_input(
             "Transaction Time", value=datetime.datetime.now().time()
