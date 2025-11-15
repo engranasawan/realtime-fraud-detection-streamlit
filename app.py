@@ -5,11 +5,41 @@ import joblib
 import numpy as np
 import pandas as pd
 import streamlit as st
+from sklearn.base import BaseEstimator, TransformerMixin
+
+
+# ==============================
+# 0. Custom transformer used in the pipeline
+# ==============================
+
+class FraudFeatureEngineer(BaseEstimator, TransformerMixin):
+    """
+    Custom feature engineering transformer used in the training pipeline.
+
+    NOTE: This implementation is intentionally minimal. It preserves the
+    interface so that joblib can unpickle the saved preprocess_pipeline.
+    If your original Colab version had additional logic inside transform(),
+    you can copy that code here to exactly match training.
+    """
+
+    def __init__(self):
+        # Add any constructor args here if you had them in Colab
+        pass
+
+    def fit(self, X, y=None):
+        # No fitting logic needed for basic transformations
+        return self
+
+    def transform(self, X):
+        # Identity transform for now; keeps columns as-is.
+        # If your original class added / modified features, implement that here.
+        X = X.copy()
+        return X
+
 
 # ==============================
 # 1. Load artifacts (cached)
 # ==============================
-
 
 @st.cache_resource
 def load_artifacts():
@@ -19,7 +49,7 @@ def load_artifacts():
     """
     models_dir = Path("models")
 
-    def _load(name):
+    def _load(name: str):
         path = models_dir / name
         try:
             return joblib.load(path)
@@ -38,6 +68,7 @@ def load_artifacts():
 
 preprocess_pipeline, imputer, lgbm_model, iso_model = load_artifacts()
 
+
 # ==============================
 # 2. Risk thresholds & logic
 # ==============================
@@ -48,7 +79,7 @@ FRAUD_HIGH = 0.00023328
 FRAUD_CRIT = 0.01732857
 
 # Isolation Forest thresholds (tuned)
-ANOM_MED = 0.04  # mild anomaly
+ANOM_MED = 0.04   # mild anomaly
 ANOM_HIGH = 0.05  # stronger anomaly
 ANOM_CRIT = 0.08  # extreme anomaly
 
@@ -90,7 +121,7 @@ def score_transaction(input_dict: dict):
     fraud_prob = float(lgbm_model.predict_proba(X_imp)[0, 1])
 
     # 4) Unsupervised anomaly score (Isolation Forest)
-    # NOTE: we invert decision_function so that higher = more anomalous
+    # decision_function: larger → more normal ⇒ we invert so higher = more anomalous
     anomaly_score = float(-iso_model.decision_function(X_imp)[0])
 
     # 5) Final risk level
@@ -101,9 +132,9 @@ def score_transaction(input_dict: dict):
 
 def render_risk_badge(risk: str):
     color_map = {
-        "LOW": "#2e7d32",  # green
-        "MEDIUM": "#f9a825",  # amber
-        "HIGH": "#f57c00",  # orange
+        "LOW": "#2e7d32",       # green
+        "MEDIUM": "#f9a825",    # amber
+        "HIGH": "#f57c00",      # orange
         "CRITICAL": "#c62828",  # red
     }
     risk_color = color_map.get(risk, "#607d8b")
@@ -179,7 +210,7 @@ with st.form("txn_form"):
             ["Android", "iOS", "Windows", "Linux", "Other"],
             index=0,
         )
-        # Streamlit Cloud doesn't support st.datetime_input, so use date + time
+        # Streamlit Cloud doesn’t have st.datetime_input → use date + time
         txn_date = st.date_input("Transaction Date", value=datetime.date.today())
         txn_time = st.time_input(
             "Transaction Time", value=datetime.datetime.now().time()
