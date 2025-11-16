@@ -380,7 +380,7 @@ def score_transaction_ml(model_pipeline, iforest_pipeline, model_payload: Dict) 
 # ----------------------------
 st.set_page_config(page_title="AI Powered Real-Time Fraud Detection", page_icon="💳", layout="centered")
 st.title("💳 AI Powered Real-Time Fraud Detection")
-st.write("Select currency first — thresholds adapt from canonical INR thresholds. Then select the channel and fill channel-specific fields.")
+st.write("Select currency first. Then select the channel and fill channel-specific fields.")
 
 
 # === Currency selector (very first page element) ===
