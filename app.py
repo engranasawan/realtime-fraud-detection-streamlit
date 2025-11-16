@@ -599,6 +599,6 @@ if channel and channel != "Choose...":
         st.json(payload)
 
        
-        )
+        
 else:
     st.info("Select a currency at the top, then choose a transaction channel to show channel-specific fields.")
