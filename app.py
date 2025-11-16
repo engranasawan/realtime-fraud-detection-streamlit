@@ -598,14 +598,7 @@ if channel and channel != "Choose...":
         st.markdown("### 📦 Payload (debug)")
         st.json(payload)
 
-        st.markdown(
-            """
-            ### Notes & tuning
-            - Canonical thresholds are defined in INR and converted into the chosen currency using `INR_PER_UNIT`.
-            - If your ML model was trained using INR amounts, convert the input `Amount` into INR (multiply by INR_PER_UNIT[currency]) before scoring.
-            - Replace the hard-coded exchange rates with live rates for production (API/admin).
-            - Tweak thresholds (amounts, km, counts) with historical labelled data for best performance.
-            """
+       
         )
 else:
     st.info("Select a currency at the top, then choose a transaction channel to show channel-specific fields.")
