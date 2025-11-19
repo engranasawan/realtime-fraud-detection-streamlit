@@ -672,15 +672,7 @@ if channel and channel != "Choose...":
         st.markdown("### 📦 Payload (debug)")
         st.json(payload)
 
-        st.markdown(
-            """
-            **Notes & Tuning**
-            - If your ML models were trained on INR, set `convert_to_inr_for_model = True` above.
-            - Device rules are disabled for Bank & ATM (Option A). NetBanking and app/web flows keep device checks.
-            - All widgets use unique keys to avoid StreamlitDuplicateElementId errors.
-            - Tune BASE_THRESHOLDS_INR to historical data for better sensitivity/specificity.
-            """
-        )
+        
 
 else:
     st.info("Select currency, enter amount/date/time, then pick a channel to show channel-specific inputs.")
